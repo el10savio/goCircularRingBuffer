@@ -1,6 +1,9 @@
 package ringbuffer
 
-import "errors"
+import (
+	"errors"
+	"log"
+)
 
 var (
 	// ErrNotPositiveCapacity error for capacity cannot be 0 or negative
@@ -39,7 +42,10 @@ type RingBuffer struct {
 // all the values in are initialized
 // to 0 by default
 func NewRingBuffer(capacity int) (RingBuffer, error) {
+	log.Println("Creating new ring buffer with capacity:", capacity)
+
 	if capacity <= 0 {
+		log.Println("Unable to create new ring buffer with negative capacity:", capacity)
 		return RingBuffer{}, ErrNotPositiveCapacity
 	}
 
@@ -50,6 +56,8 @@ func NewRingBuffer(capacity int) (RingBuffer, error) {
 		WritePosition: 0,
 	}
 
+	log.Println("Successfully created new ring buffer:", ringBuffer)
+
 	return ringBuffer, nil
 }
 
@@ -58,8 +66,12 @@ func NewRingBuffer(capacity int) (RingBuffer, error) {
 // WritePosition to the
 // start of the buffer
 func (ringBuffer *RingBuffer) Clear() {
+	log.Println("Clearing ring buffer:", ringBuffer)
+
 	ringBuffer.FillCount = 0
 	ringBuffer.WritePosition = 0
+
+	log.Println("Successfully Cleared ring buffer:", ringBuffer)
 }
 
 // AvailableCapacity returns how many elements
@@ -75,6 +87,8 @@ func (ringBuffer *RingBuffer) AvailableCapacity() int {
 // position and updates the
 // WritePosition and FillCount
 func (ringBuffer *RingBuffer) Enqueue(value int) (RingBuffer, error) {
+	log.Println("Enqueueing value:", value, "to ring buffer:", ringBuffer)
+
 	if ringBuffer.AvailableCapacity() > 0 {
 		if ringBuffer.WritePosition >= ringBuffer.Capacity {
 			ringBuffer.WritePosition = 0
@@ -83,11 +97,16 @@ func (ringBuffer *RingBuffer) Enqueue(value int) (RingBuffer, error) {
 		ringBuffer.Buffer[ringBuffer.WritePosition] = value
 
 		ringBuffer.WritePosition++
-		ringBuffer.FillCount++
+		log.Println("Updated WritePosition:", ringBuffer.WritePosition)
 
+		ringBuffer.FillCount++
+		log.Println("Updated FillCount:", ringBuffer.FillCount)
+
+		log.Println("Successfully enqueued value:", value, "Buffer:", ringBuffer)
 		return *ringBuffer, nil
 	}
 
+	log.Println("Unable to enqueue value:", value, "Buffer is full:", ringBuffer)
 	return *ringBuffer, ErrFullBuffer
 }
 
@@ -96,7 +115,10 @@ func (ringBuffer *RingBuffer) Enqueue(value int) (RingBuffer, error) {
 // In the case when the buffer is
 // empty it returns an error
 func (ringBuffer *RingBuffer) Dequeue() (int, error) {
+	log.Println("Dequeueing ring buffer:", ringBuffer)
+
 	if ringBuffer.FillCount == 0 {
+		log.Println("Unable to dequeue buffer is empty:", ringBuffer)
 		return 0, ErrEmptyBuffer
 	}
 
@@ -106,7 +128,10 @@ func (ringBuffer *RingBuffer) Dequeue() (int, error) {
 	}
 
 	value := ringBuffer.Buffer[readPosition]
-	ringBuffer.FillCount--
 
+	ringBuffer.FillCount--
+	log.Println("Updated FillCount:", ringBuffer.FillCount)
+
+	log.Println("Successfully dequeued value:", value, "Buffer:", ringBuffer)
 	return value, nil
 }
