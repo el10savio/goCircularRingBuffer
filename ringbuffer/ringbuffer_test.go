@@ -9,7 +9,7 @@ func TestNewRingBuffer(t *testing.T) {
 	capacity := 4
 
 	expectedRingBuffer := RingBuffer{
-		Buffer:        make([]int, capacity),
+		Buffer:        make([]interface{}, capacity),
 		Capacity:      capacity,
 		FillCount:     0,
 		WritePosition: 0,
@@ -63,14 +63,14 @@ func TestNewRingBuffer_ZeroCapacity(t *testing.T) {
 
 func TestClear(t *testing.T) {
 	ringBuffer := RingBuffer{
-		Buffer:        []int{1, 2, 3, 4, 5},
+		Buffer:        []interface{}{1, 2, 3, 4, 5},
 		Capacity:      5,
 		FillCount:     2,
 		WritePosition: 4,
 	}
 
 	expectedRingBuffer := RingBuffer{
-		Buffer:        []int{1, 2, 3, 4, 5},
+		Buffer:        []interface{}{1, 2, 3, 4, 5},
 		Capacity:      5,
 		FillCount:     0,
 		WritePosition: 0,
@@ -91,7 +91,7 @@ func TestEnqueue(t *testing.T) {
 	}
 
 	expectedRingBuffer := RingBuffer{
-		Buffer:        []int{1, 0},
+		Buffer:        []interface{}{1, nil},
 		Capacity:      2,
 		FillCount:     1,
 		WritePosition: 1,
@@ -116,7 +116,7 @@ func TestEnqueue_FullBuffer(t *testing.T) {
 	}
 
 	expectedRingBuffer := RingBuffer{
-		Buffer:        []int{1, 2},
+		Buffer:        []interface{}{1, "a"},
 		Capacity:      2,
 		FillCount:     2,
 		WritePosition: 2,
@@ -128,7 +128,7 @@ func TestEnqueue_FullBuffer(t *testing.T) {
 		t.Fatalf("Error in enqueue ring buffer: %v", err)
 	}
 
-	_, actualErr = ringBuffer.Enqueue(2)
+	_, actualErr = ringBuffer.Enqueue("a")
 	if actualErr != nil {
 		t.Fatalf("Error in enqueue ring buffer: %v", err)
 	}
@@ -151,7 +151,7 @@ func TestDequeue(t *testing.T) {
 	}
 
 	expectedRingBuffer := RingBuffer{
-		Buffer:        []int{1, 2},
+		Buffer:        []interface{}{1, "a"},
 		Capacity:      2,
 		FillCount:     1,
 		WritePosition: 2,
@@ -164,7 +164,7 @@ func TestDequeue(t *testing.T) {
 		t.Fatalf("Error in enqueue ring buffer: %v", err)
 	}
 
-	_, actualErr = ringBuffer.Enqueue(2)
+	_, actualErr = ringBuffer.Enqueue("a")
 	if actualErr != nil {
 		t.Fatalf("Error in enqueue ring buffer: %v", err)
 	}
@@ -193,7 +193,7 @@ func TestDequeue_EmptyBuffer(t *testing.T) {
 	}
 
 	expectedRingBuffer := RingBuffer{
-		Buffer:        []int{0, 0},
+		Buffer:        []interface{}{nil, nil},
 		Capacity:      2,
 		FillCount:     0,
 		WritePosition: 0,

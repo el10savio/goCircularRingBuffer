@@ -20,7 +20,7 @@ var (
 // used to contain the ring queue
 type RingBuffer struct {
 	// Buffer stores the elements
-	Buffer []int
+	Buffer []interface{}
 
 	// Capacity is the max number of
 	// elements the buffer can hold
@@ -50,7 +50,7 @@ func NewRingBuffer(capacity int) (RingBuffer, error) {
 	}
 
 	ringBuffer := RingBuffer{
-		Buffer:        make([]int, capacity),
+		Buffer:        make([]interface{}, capacity),
 		Capacity:      capacity,
 		FillCount:     0,
 		WritePosition: 0,
@@ -86,7 +86,7 @@ func (ringBuffer *RingBuffer) AvailableCapacity() int {
 // it adds to the next available
 // position and updates the
 // WritePosition and FillCount
-func (ringBuffer *RingBuffer) Enqueue(value int) (RingBuffer, error) {
+func (ringBuffer *RingBuffer) Enqueue(value interface{}) (RingBuffer, error) {
 	log.Println("Enqueueing value:", value, "to ring buffer:", ringBuffer)
 
 	if ringBuffer.AvailableCapacity() > 0 {
@@ -114,7 +114,7 @@ func (ringBuffer *RingBuffer) Enqueue(value int) (RingBuffer, error) {
 // It does so by reducing the FillCount
 // In the case when the buffer is
 // empty it returns an error
-func (ringBuffer *RingBuffer) Dequeue() (int, error) {
+func (ringBuffer *RingBuffer) Dequeue() (interface{}, error) {
 	log.Println("Dequeueing ring buffer:", ringBuffer)
 
 	if ringBuffer.FillCount == 0 {
