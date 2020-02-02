@@ -5,6 +5,6 @@ Here we can create a bounded circular ring buffer queue that can quickly add and
 
 **Methodology**
 
-It works by creating a bounded slice that is initially filled ith zeros. When elements are added they replace the old values.
+It works by creating a bounded slice that is initially filled with nils. When elements are added they replace the old values.
 
 A writePosition marker and FillCount is also stored which tracks the elements to be read and inserted next.
