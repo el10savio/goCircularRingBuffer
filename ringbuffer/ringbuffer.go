@@ -57,7 +57,6 @@ func NewRingBuffer(capacity int) (RingBuffer, error) {
 	}
 
 	log.Println("Successfully created new ring buffer:", ringBuffer)
-
 	return ringBuffer, nil
 }
 
@@ -89,25 +88,25 @@ func (ringBuffer *RingBuffer) AvailableCapacity() int {
 func (ringBuffer *RingBuffer) Enqueue(value interface{}) (RingBuffer, error) {
 	log.Println("Enqueueing value:", value, "to ring buffer:", ringBuffer)
 
-	if ringBuffer.AvailableCapacity() > 0 {
-		if ringBuffer.WritePosition >= ringBuffer.Capacity {
-			ringBuffer.WritePosition = 0
-		}
-
-		ringBuffer.Buffer[ringBuffer.WritePosition] = value
-
-		ringBuffer.WritePosition++
-		log.Println("Updated WritePosition:", ringBuffer.WritePosition)
-
-		ringBuffer.FillCount++
-		log.Println("Updated FillCount:", ringBuffer.FillCount)
-
-		log.Println("Successfully enqueued value:", value, "Buffer:", ringBuffer)
-		return *ringBuffer, nil
+	if ringBuffer.AvailableCapacity() <= 0 {
+		log.Println("Unable to enqueue value:", value, "Buffer is full:", ringBuffer)
+		return *ringBuffer, ErrFullBuffer
 	}
 
-	log.Println("Unable to enqueue value:", value, "Buffer is full:", ringBuffer)
-	return *ringBuffer, ErrFullBuffer
+	if ringBuffer.WritePosition >= ringBuffer.Capacity {
+		ringBuffer.WritePosition = 0
+	}
+
+	ringBuffer.Buffer[ringBuffer.WritePosition] = value
+
+	ringBuffer.WritePosition++
+	log.Println("Updated WritePosition:", ringBuffer.WritePosition)
+
+	ringBuffer.FillCount++
+	log.Println("Updated FillCount:", ringBuffer.FillCount)
+
+	log.Println("Successfully enqueued value:", value, "Buffer:", ringBuffer)
+	return *ringBuffer, nil
 }
 
 // Dequeue removes the oldest value from the ring buffer
